@@ -1,11 +1,14 @@
 import 'package:anubs_invoice_app/controller/add_item_controller.dart';
 import 'package:anubs_invoice_app/utiles/my_app_bar.dart';
+import 'package:barcode/barcode.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class MobileViewProduct extends StatelessWidget {
   MobileViewProduct({super.key});
   final Product productDetails = Get.arguments;
+  final addItemController = Get.find<AddItemController>();
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +111,7 @@ class MobileViewProduct extends StatelessWidget {
                       alignment: Alignment.center,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade800,
+                        color: Theme.of(context).colorScheme.primary,
                         borderRadius: BorderRadius.circular(7),
                       ),
                       child: Text(
@@ -119,6 +122,35 @@ class MobileViewProduct extends StatelessWidget {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 30),
+                    Text(
+                      "Barcode",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 27,
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      width: double.infinity,
+                      decoration: BoxDecoration(color: Colors.white),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          return Container(
+                            width: constraints.maxWidth,
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(color: Colors.white),
+                            child: Center(
+                              child:
+                                  productDetails.barcode.isEmpty
+                                      ? SizedBox.shrink()
+                                      : _buildBarcode(productDetails),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -127,5 +159,37 @@ class MobileViewProduct extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildBarcode(Product productDetails) {
+    try {
+      final barcode = Barcode.code128();
+      final svg = barcode.toSvg(
+        productDetails.barcode,
+        width: 300,
+        height: 100,
+        drawText: false,
+      );
+      return Column(
+        children: [
+          SvgPicture.string(svg),
+          SizedBox(height: 8),
+          Text(
+            productDetails.customCode.toUpperCase(),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      );
+    } catch (e) {
+      print("Barcode generation error: $e");
+      return Text(
+        "Error generating barcode",
+        style: TextStyle(color: Colors.red),
+      );
+    }
   }
 }

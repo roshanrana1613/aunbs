@@ -57,7 +57,11 @@ class CardList extends StatelessWidget {
                       ),
                       IconButton(
                         onPressed: () {
-                          Get.toNamed("/pdfPage", arguments: invoice);
+                          if (invoice != null) {
+                            Get.toNamed("/pdfPage", arguments: invoice);
+                          } else {
+                            Get.snackbar("Error", "Invoice data is missing");
+                          }
                         },
                         icon: const Icon(
                           Icons.remove_red_eye_outlined,
@@ -130,7 +134,11 @@ class CardList extends StatelessWidget {
                       IconButton(
                         onPressed: () {
                           // Define your product edit/view logic here
-                          Get.toNamed(Routes.viewProduct, arguments: product!);
+                          if (product != null) {
+                            Get.toNamed(Routes.viewProduct, arguments: product);
+                          } else {
+                            Get.snackbar("Error", "Product data is missing");
+                          }
                         },
                         icon: const Icon(
                           Icons.remove_red_eye_outlined,

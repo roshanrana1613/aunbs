@@ -37,13 +37,24 @@ class AddItemController extends GetxController {
     final size = int.tryParse(sizeVariant.text.trim()) ?? 0;
     final description = productDescription.text.trim();
     final code = customCode.text.trim();
+    final barcodeValue = barcode.value;
 
-    return Product(name, brand, price, quantity, size, description, code);
+    return Product(
+      name,
+      brand,
+      price,
+      quantity,
+      size,
+      description,
+      code,
+      barcodeValue,
+    );
   }
 
   void saveProduct() {
     final product = createProduct();
     productList.add(product);
+
     productName.clear();
     brandName.clear();
     productPrice.clear();
@@ -246,7 +257,8 @@ class InvoiceDetails {
   final double total;
   final String notes;
 
-  InvoiceDetails(this.notes, {
+  InvoiceDetails(
+    this.notes, {
     required this.name,
     required this.number,
     required this.address,
@@ -271,6 +283,7 @@ class Product {
   final int size;
   final String description;
   final String customCode;
+  final String barcode;
 
   Product(
     this.productName,
@@ -280,5 +293,6 @@ class Product {
     this.size,
     this.description,
     this.customCode,
+    this.barcode,
   );
 }

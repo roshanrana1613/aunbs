@@ -15,7 +15,7 @@ class TabletInvoicePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fromDrawer = Get.arguments?['fromDrawer'] ?? false;
+    // final fromDrawer = Get.arguments?['fromDrawer'] ?? false;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -23,13 +23,10 @@ class TabletInvoicePage extends StatelessWidget {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: MyAppBar(
-            leading:
-                fromDrawer
-                    ? null
-                    : IconButton(
-                      onPressed: () => Get.back(),
-                      icon: const Icon(Icons.arrow_back),
-                    ),
+            leading: IconButton(
+              onPressed: () => Get.back(),
+              icon: const Icon(Icons.arrow_back),
+            ),
             title: "Create New Invoice",
           ),
         ),
