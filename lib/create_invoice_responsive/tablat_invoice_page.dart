@@ -1,3 +1,4 @@
+import 'package:anubs_invoice_app/controller/calculation_controller.dart';
 import 'package:anubs_invoice_app/utiles/invoice_action_buttons%20.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,7 @@ class TabletInvoicePage extends StatelessWidget {
   final addItemController = Get.find<AddItemController>();
   final _formKey = GlobalKey<FormState>();
   final List<String> gstPercentages = ['0%', '5%', '12%', '18%', '28%'];
+  final calculationController = Get.find<CalculationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -283,7 +285,7 @@ class TabletInvoicePage extends StatelessWidget {
                 hintText: "Item name or HSN code",
                 enable: !addItemController.isReadOnly.value,
                 keyboardType: TextInputType.text,
-                onChanged: (_) => addItemController.calculateItem(item),
+                onChanged: (_) => calculationController.calculateItem(item),
                 icon: null,
               ),
             ),
@@ -297,7 +299,7 @@ class TabletInvoicePage extends StatelessWidget {
                 labelName: "Quantity",
                 hintText: " Qty",
                 enable: !addItemController.isReadOnly.value,
-                onChanged: (_) => addItemController.calculateItem(item),
+                onChanged: (_) => calculationController.calculateItem(item),
                 icon: null,
               ),
             ),
@@ -311,7 +313,7 @@ class TabletInvoicePage extends StatelessWidget {
                 labelName: "Rate",
                 hintText: " Rate",
                 enable: !addItemController.isReadOnly.value,
-                onChanged: (_) => addItemController.calculateItem(item),
+                onChanged: (_) => calculationController.calculateItem(item),
                 icon: null,
               ),
             ),
@@ -395,7 +397,7 @@ class TabletInvoicePage extends StatelessWidget {
                   onTap: () {
                     item.gst.text = gstValue;
                     Navigator.of(context).pop();
-                    addItemController.calculateItem(item);
+                    calculationController.calculateItem(item);
                   },
                 );
               },

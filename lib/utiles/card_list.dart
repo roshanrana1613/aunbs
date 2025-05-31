@@ -1,3 +1,4 @@
+import 'package:anubs_invoice_app/model/invoice.dart';
 import 'package:anubs_invoice_app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,26 +6,28 @@ import 'package:get/get.dart';
 import '../controller/add_item_controller.dart';
 
 class CardList extends StatelessWidget {
-  final Invoice? invoice;
+  final InvoiceData? invoiceData;
   final Product? product;
   final int index;
 
-  const CardList({super.key, this.invoice, this.product, required this.index})
-    : assert(
-        invoice != null || product != null,
-        'Either invoice or product must be provided.',
-      );
+  const CardList({
+    super.key,
+    this.invoiceData,
+    this.product,
+    required this.index,
+  }) : assert(
+         invoiceData != null || product != null,
+         'Either invoice or product must be provided.',
+       );
 
   @override
   Widget build(BuildContext context) {
-    final addItemController = Get.find<AddItemController>();
-
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (invoice != null) ...[
+          if (invoiceData != null) ...[
             // Invoice UI
             Container(
               padding: EdgeInsets.all(15),
@@ -48,7 +51,7 @@ class CardList extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          "Invoice No: ${invoice!.details.invoiceNumber}",
+                          "Invoice No: ${invoiceData!.invoiceNumber}",
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -57,8 +60,8 @@ class CardList extends StatelessWidget {
                       ),
                       IconButton(
                         onPressed: () {
-                          if (invoice != null) {
-                            Get.toNamed("/pdfPage", arguments: invoice);
+                          if (invoiceData != null) {
+                            Get.toNamed(Routes.pdfPage, arguments: invoiceData);
                           } else {
                             Get.snackbar("Error", "Invoice data is missing");
                           }
@@ -73,7 +76,7 @@ class CardList extends StatelessWidget {
                       ),
                       IconButton(
                         onPressed: () {
-                          addItemController.savedInvoices.removeAt(index);
+                          // i.savedInvoices.removeAt(index);
                         },
                         icon: const Icon(Icons.delete, color: Colors.red),
                         style: ButtonStyle(
@@ -84,17 +87,17 @@ class CardList extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Client: ${invoice!.details.name}",
+                    "Client: ${invoiceData!.clientName}",
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Date: ${invoice!.details.invoiceDate}",
+                    "Date: ${invoiceData!.invoiceDate}",
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Amount: ₹ ${invoice!.details.total.toStringAsFixed(2)}",
+                    "Amount: ₹ ${invoiceData!.grandTotal}",
                     style: const TextStyle(fontSize: 16),
                   ),
                 ],
@@ -151,7 +154,7 @@ class CardList extends StatelessWidget {
                       IconButton(
                         onPressed: () {
                           // Remove product logic here
-                          addItemController.productList.removeAt(index);
+                          // addItemController.productList.removeAt(index);
                         },
                         icon: const Icon(Icons.delete, color: Colors.red),
                         style: ButtonStyle(

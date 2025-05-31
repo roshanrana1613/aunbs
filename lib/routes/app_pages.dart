@@ -2,6 +2,8 @@
 import 'package:anubs_invoice_app/add_product_responsive/dekstop_add_product_page.dart';
 import 'package:anubs_invoice_app/add_product_responsive/mobile_add_product_page.dart';
 import 'package:anubs_invoice_app/add_product_responsive/tablat_add_product_page.dart';
+import 'package:anubs_invoice_app/bindings/calculation_binding.dart';
+import 'package:anubs_invoice_app/bindings/invocie_binding.dart';
 import 'package:anubs_invoice_app/pdf_page_responsive/pdf_page.dart';
 import 'package:anubs_invoice_app/pdf_page_responsive/tablat_pdf_page.dart';
 import 'package:anubs_invoice_app/pdf_page_responsive/dekstop_pdf_page.dart';
@@ -73,7 +75,7 @@ class AppPages {
             tablatScreen: TablatInoviceList(),
             dekstopScreen: DekstopInvoiceList(),
           ),
-      binding: AddItemBinding(),
+      bindings: [AddItemBinding(), InvocieBinding()],
     ),
     GetPage(
       name: Routes.createInvoice,
@@ -83,7 +85,7 @@ class AppPages {
             tablatScreen: TabletInvoicePage(),
             dekstopScreen: DesktopInvoicePage(),
           ),
-      bindings: [AddItemBinding(), PageBinding()],
+      bindings: [AddItemBinding(), PageBinding(), CalculationBinding()],
     ),
     GetPage(
       name: Routes.savedItems,

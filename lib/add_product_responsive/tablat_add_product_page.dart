@@ -1,4 +1,5 @@
 import 'package:anubs_invoice_app/controller/add_item_controller.dart';
+import 'package:anubs_invoice_app/controller/barcode_controller.dart';
 import 'package:anubs_invoice_app/routes/app_pages.dart';
 import 'package:anubs_invoice_app/utiles/client_details.dart';
 import 'package:anubs_invoice_app/utiles/my_add_item_button.dart';
@@ -11,6 +12,8 @@ import 'package:get/get.dart';
 class TablatAddProductPage extends StatelessWidget {
   TablatAddProductPage({super.key});
   final addItemController = Get.find<AddItemController>();
+  final barcodeController = Get.find<BarcodeController>();
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -301,10 +304,26 @@ class TablatAddProductPage extends StatelessWidget {
                                   icon: Icons.qr_code_2,
                                   onPressed: () {
                                     if (_formKey.currentState!.validate()) {
-                                      final qrdata =
-                                          addItemController.generateBarcode();
-                                      addItemController.barcode.value = qrdata;
+                                      final productName =
+                                          addItemController.productName.text
+                                              .trim();
+                                      final brand =
+                                          addItemController.brandName.text
+                                              .trim();
+                                      final price =
+                                          double.tryParse(
+                                            addItemController.productPrice.text
+                                                .trim(),
+                                          ) ??
+                                          0.0;
+
+                                      barcodeController.generateBarcode(
+                                        productName,
+                                        brand,
+                                        price,
+                                      );
                                     }
+                                    FocusScope.of(context).unfocus();
                                   },
                                 ),
                               ),

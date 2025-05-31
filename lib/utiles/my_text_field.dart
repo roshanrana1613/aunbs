@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 class MyTextField extends StatelessWidget {
   final String hintText;
   final Widget? labelName;
-  final TextInputType keyboardtype;
+  final TextInputType keyboardType; // Corrected parameter name (camelCase)
   final TextEditingController controller;
   final IconButton? iconButton;
   final void Function(String)? onChanged;
+  final bool readOnly; // Added readOnly parameter
 
   const MyTextField({
     super.key,
@@ -15,13 +16,15 @@ class MyTextField extends StatelessWidget {
     required this.controller,
     this.iconButton,
     this.onChanged,
-    required this.keyboardtype,
+    required this.keyboardType, // Corrected parameter name
+    this.readOnly = false, // Default value for readOnly
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      keyboardType: keyboardtype,
+      keyboardType: keyboardType,
+      readOnly: readOnly, // Added readOnly property
       onChanged: onChanged,
       controller: controller,
       decoration: InputDecoration(
@@ -32,14 +35,11 @@ class MyTextField extends StatelessWidget {
         suffixIcon: iconButton,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(7),
-          borderSide: BorderSide(
-            color: Colors.black,
-            width: 0.5,
-          ), // Remove border to rely on container
+          borderSide: BorderSide(color: Colors.black, width: 0.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(7),
-          borderSide: BorderSide(color: Colors.blue), // Focused border
+          borderSide: BorderSide(color: Colors.blue),
         ),
       ),
     );

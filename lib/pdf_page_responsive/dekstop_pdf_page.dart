@@ -1,4 +1,5 @@
 import 'package:anubs_invoice_app/controller/add_item_controller.dart';
+import 'package:anubs_invoice_app/model/invoice.dart';
 import 'package:anubs_invoice_app/utiles/my_add_item_button.dart';
 import 'package:anubs_invoice_app/utiles/my_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,7 @@ import 'package:get/get.dart';
 class DekstopPdfPage extends StatelessWidget {
   DekstopPdfPage({super.key});
   final addItemController = Get.find<AddItemController>();
-  final Invoice saveInvoice = Get.arguments;
+  final InvoiceData invoiceData = Get.arguments;
 
   @override
   Widget build(BuildContext context) {
@@ -77,11 +78,11 @@ class DekstopPdfPage extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "Invoice No: ${saveInvoice.details.invoiceNumber}",
+                            "Invoice No: ${invoiceData.invoiceNumber}",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            "Date: ${saveInvoice.details.invoiceDate}",
+                            "Date: ${invoiceData.invoiceDate}",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -98,7 +99,7 @@ class DekstopPdfPage extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    saveInvoice.details.name,
+                    invoiceData.clientName.toString(),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
@@ -111,7 +112,7 @@ class DekstopPdfPage extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    saveInvoice.details.number,
+                    invoiceData.contactNumber.toString(),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const Divider(color: Colors.grey, height: 50, thickness: 1),
@@ -177,7 +178,7 @@ class DekstopPdfPage extends StatelessWidget {
 
                   GridView.builder(
                     padding: EdgeInsets.zero,
-                    itemCount: saveInvoice.items.length,
+                    itemCount: invoiceData.items!.length,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate:
@@ -187,43 +188,43 @@ class DekstopPdfPage extends StatelessWidget {
                           mainAxisSpacing: 10,
                         ),
                     itemBuilder: (context, index) {
-                      final item = saveInvoice.items[index];
+                      final item = invoiceData.items![index];
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Expanded(
                             child: Text(
-                              item.name.text,
+                              item.description.toString(),
                               textAlign: TextAlign.center,
                             ),
                           ),
                           Expanded(
                             child: Text(
-                              item.quantity.text,
+                              item.quantity.toString(),
                               textAlign: TextAlign.center,
                             ),
                           ),
                           Expanded(
                             child: Text(
-                              item.rate.text,
+                              item.rate.toString(),
                               textAlign: TextAlign.center,
                             ),
                           ),
                           Expanded(
                             child: Text(
-                              item.gst.text,
+                              item.gST.toString(),
                               textAlign: TextAlign.center,
                             ),
                           ),
                           Expanded(
                             child: Text(
-                              "\u20B9 ${item.tax.text}",
+                              "\u20B9 ${item.tax}",
                               textAlign: TextAlign.center,
                             ),
                           ),
                           Expanded(
                             child: Text(
-                              "\u20B9 ${item.total.text}",
+                              "\u20B9 ${item.total}",
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -240,7 +241,7 @@ class DekstopPdfPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            "Subtotal: \u20B9 ${saveInvoice.details.subTotal}",
+                            "Subtotal: \u20B9 ${invoiceData.subtotal}",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
@@ -248,7 +249,7 @@ class DekstopPdfPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            "Total GST: \u20B9 ${saveInvoice.details.total - saveInvoice.details.subTotal}",
+                            "Total GST: \u20B9 ${invoiceData.grandTotal! - invoiceData.subtotal!.toDouble()}",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
@@ -256,7 +257,7 @@ class DekstopPdfPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            "Total: \u20B9 ${saveInvoice.details.total}",
+                            "Total: \u20B9 ${invoiceData.grandTotal}",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
@@ -268,7 +269,7 @@ class DekstopPdfPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  Center(child: Text(saveInvoice.details.notes)),
+                  // Center(child: Text(invoiceData.details.notes)),
                 ],
               ),
             ),
