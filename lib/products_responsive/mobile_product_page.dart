@@ -62,13 +62,13 @@ class MobileProductPage extends StatelessWidget {
                   prefixIcon: Icon(Icons.search),
                 ),
               ),
-            const  SizedBox(height: 30),
+              const SizedBox(height: 30),
               Expanded(
                 child: ListView.builder(
                   itemCount: addItemController.productList.length,
                   itemBuilder: (context, index) {
-                    // final product = addItemController.productList[index];
-                    return CardList(index: index);
+                    final product = addItemController.productList[index];
+                    return CardList(index: index, product: product);
                   },
                 ),
               ),

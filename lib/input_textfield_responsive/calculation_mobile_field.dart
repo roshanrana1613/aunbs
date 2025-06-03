@@ -4,6 +4,8 @@ import 'package:anubs_invoice_app/utiles/my_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../model/invoice.dart';
+
 class CalculationMobileField extends StatelessWidget {
   final Item? itemToEdit;
   final int? index;
@@ -70,7 +72,7 @@ class CalculationMobileField extends StatelessWidget {
       children: [
         MyTextField(
           hintText: "Item Name",
-          controller: item.name,
+          controller: item.description,
           keyboardType: TextInputType.text,
         ),
         const SizedBox(height: 30),
@@ -130,6 +132,7 @@ class CalculationMobileField extends StatelessWidget {
                 Get.back();
                 Get.snackbar(
                   "Success",
+                  // ignore: unnecessary_null_comparison
                   "Item ${index != null ? 'updated' : 'created'} successfully",
                   snackPosition: SnackPosition.BOTTOM,
                   backgroundColor: Colors.green.shade100,
@@ -137,6 +140,7 @@ class CalculationMobileField extends StatelessWidget {
                 );
               },
               child: Text(
+                // ignore: unnecessary_null_comparison
                 index != null ? "Update" : "Create",
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,

@@ -5,13 +5,28 @@ import 'package:anubs_invoice_app/utiles/my_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class DekstopPdfPage extends StatelessWidget {
-  DekstopPdfPage({super.key});
+class DesktopPdfPage extends StatelessWidget {
+  DesktopPdfPage({super.key});
+
   final addItemController = Get.find<AddItemController>();
-  final InvoiceData invoiceData = Get.arguments;
+  final invoiceData = Get.arguments;
 
   @override
   Widget build(BuildContext context) {
+    // Type check to ensure arguments are valid
+    if (invoiceData is! InvoiceData) {
+      return const Scaffold(
+        body: Center(child: Text("Invalid Invoice Data passed.")),
+      );
+    }
+
+    final data = invoiceData as InvoiceData;
+
+    // Fallback values for calculations
+    final subtotal = data.subtotal ?? 0.0;
+    final grandTotal = data.grandTotal ?? 0.0;
+    final gstAmount = grandTotal - subtotal;
+
     return Scaffold(
       appBar: MyAppBar(
         title: "Invoice",
@@ -22,20 +37,18 @@ class DekstopPdfPage extends StatelessWidget {
               width: 135,
               label: "Download PDF",
               icon: Icons.print,
-              onPressed: () {},
+              onPressed: () {
+                // PDF download logic here
+              },
             ),
           ),
         ],
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 20,
-            left: 400,
-            right: 400,
-            bottom: 20,
-          ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 400),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
           child: Center(
             child: Container(
               padding: const EdgeInsets.all(20),
@@ -44,6 +57,7 @@ class DekstopPdfPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Header
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -66,7 +80,6 @@ class DekstopPdfPage extends StatelessWidget {
                           ],
                         ),
                       ),
-
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -78,18 +91,20 @@ class DekstopPdfPage extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "Invoice No: ${invoiceData.invoiceNumber}",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            "Invoice No: ${data.invoiceNumber}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            "Date: ${invoiceData.invoiceDate}",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            "Date: ${Get.find<AddItemController>().formatDate(invoiceData!.invoiceDate.toString())}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
                     ],
                   ),
                   const Divider(color: Colors.grey, height: 50, thickness: 1),
+
+                  // Client Info
                   const Text(
                     "Bill To:",
                     style: TextStyle(
@@ -99,7 +114,7 @@ class DekstopPdfPage extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    invoiceData.clientName.toString(),
+                    data.clientName ?? "N/A",
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
@@ -112,23 +127,22 @@ class DekstopPdfPage extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    invoiceData.contactNumber.toString(),
+                    data.contactNumber?.toString() ?? "N/A",
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const Divider(color: Colors.grey, height: 50, thickness: 1),
-                  const SizedBox(height: 10),
+
+                  // Items Table Heading
                   const Text(
-                    "Total Items",
+                    "Items",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
                       color: Colors.grey,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  // Headings row
+                  const SizedBox(height: 20),
                   const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Expanded(
                         child: Text(
@@ -139,7 +153,7 @@ class DekstopPdfPage extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "Quantity",
+                          "Qty",
                           textAlign: TextAlign.center,
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
@@ -153,7 +167,7 @@ class DekstopPdfPage extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "GST",
+                          "GST%",
                           textAlign: TextAlign.center,
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
@@ -176,64 +190,66 @@ class DekstopPdfPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
 
-                  GridView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: invoiceData.items!.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 1,
-                          mainAxisExtent: 40,
-                          mainAxisSpacing: 10,
-                        ),
-                    itemBuilder: (context, index) {
-                      final item = invoiceData.items![index];
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              item.description.toString(),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              item.quantity.toString(),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              item.rate.toString(),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              item.gST.toString(),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              "\u20B9 ${item.tax}",
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              "\u20B9 ${item.total}",
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                  // Items List
+                  data.items == null || data.items!.isEmpty
+                      ? const Text(
+                        "No items available.",
+                        style: TextStyle(color: Colors.grey),
+                      )
+                      : ListView.separated(
+                        itemCount: data.items!.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        separatorBuilder:
+                            (_, __) => const Divider(color: Colors.grey),
+                        itemBuilder: (context, index) {
+                          final item = data.items![index];
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  item.description.text,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  item.quantity.text,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  "₹ ${item.rate.text}",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  "${item.gst.text}%",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  "₹ ${item.tax.text}",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  "₹ ${item.total.text}",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
 
                   const SizedBox(height: 30),
+
+                  // Totals
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -241,23 +257,23 @@ class DekstopPdfPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            "Subtotal: \u20B9 ${invoiceData.subtotal}",
+                            "Subtotal: \u20B9 ${subtotal.toStringAsFixed(2)}",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: 16,
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 8),
                           Text(
-                            "Total GST: \u20B9 ${invoiceData.grandTotal! - invoiceData.subtotal!.toDouble()}",
+                            "Total GST: \u20B9 ${gstAmount.toStringAsFixed(2)}",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: 16,
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 8),
                           Text(
-                            "Total: \u20B9 ${invoiceData.grandTotal}",
+                            "Grand Total: \u20B9 ${grandTotal.toStringAsFixed(2)}",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
@@ -269,7 +285,6 @@ class DekstopPdfPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  // Center(child: Text(invoiceData.details.notes)),
                 ],
               ),
             ),

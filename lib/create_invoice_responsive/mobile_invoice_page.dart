@@ -8,12 +8,14 @@ import 'package:anubs_invoice_app/utiles/client_details.dart';
 import 'package:anubs_invoice_app/utiles/my_add_item_button.dart';
 import 'package:anubs_invoice_app/utiles/my_app_bar.dart';
 
+import '../model/invoice.dart';
+
 class MobileInvoicePage extends StatelessWidget {
   MobileInvoicePage({super.key});
 
   final addItemController = Get.find<AddItemController>();
   final _formKey = GlobalKey<FormState>();
-  final List<String> gstPercentages = ['0%', '5%', '12%', '18%', '28%'];
+  final List<String> gstPercentages = ['0', '5', '12', '18', '28'];
   final invoiceController = Get.find<InvoiceController>();
   final calculationController = Get.find<CalculationController>();
 
@@ -60,7 +62,7 @@ class MobileInvoicePage extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(10),
+        // borderRadius: BorderRaircular(10),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(35),
@@ -175,10 +177,7 @@ class MobileInvoicePage extends StatelessWidget {
               hintText: 'dd/mm/yyyy',
               icon: IconButton(
                 onPressed: () async {
-                  final date = await addItemController.pickDate(context);
-                  if (date != null) {
-                    addItemController.invoiceDate.text = date;
-                  }
+                  _pickDate(addItemController.invoiceDate);
                 },
                 icon: const Icon(Icons.calendar_month),
               ),
@@ -189,6 +188,7 @@ class MobileInvoicePage extends StatelessWidget {
                 return null;
               },
             ),
+
             const SizedBox(height: 30),
             ClientDetails(
               keyboardType: TextInputType.number,
@@ -197,10 +197,8 @@ class MobileInvoicePage extends StatelessWidget {
               hintText: 'dd/mm/yyyy',
               icon: IconButton(
                 onPressed: () async {
-                  final date = await addItemController.pickDate(context);
-                  if (date != null) {
-                    addItemController.dueDate.text = date;
-                  }
+                  _pickDate(addItemController.dueDate);
+              
                 },
                 icon: const Icon(Icons.calendar_month),
               ),
@@ -278,13 +276,13 @@ class MobileInvoicePage extends StatelessWidget {
             SizedBox(
               width: 230,
               child: ClientDetails(
-                controller: item.name,
+                controller: item.description,
                 textAlign: TextAlign.center,
                 labelName: "Item Name",
                 hintText: "Item name or HSN code",
                 enable: !addItemController.isReadOnly.value,
                 keyboardType: TextInputType.text,
-                onChanged: (_) => calculationController.calculateItem(item),
+                onChanged: (_) => calculateItem(item),
                 icon: null,
               ),
             ),
@@ -298,7 +296,7 @@ class MobileInvoicePage extends StatelessWidget {
                 labelName: "Quantity",
                 hintText: " Qty",
                 enable: !addItemController.isReadOnly.value,
-                onChanged: (_) => calculationController.calculateItem(item),
+                onChanged: (_) => calculateItem(item),
                 icon: null,
               ),
             ),
@@ -312,7 +310,7 @@ class MobileInvoicePage extends StatelessWidget {
                 labelName: "Rate",
                 hintText: " Rate",
                 enable: !addItemController.isReadOnly.value,
-                onChanged: (_) => calculationController.calculateItem(item),
+                onChanged: (_) => calculateItem(item),
                 icon: null,
               ),
             ),
@@ -347,8 +345,8 @@ class MobileInvoicePage extends StatelessWidget {
                                   title: Text(gstValue),
                                   onTap: () {
                                     item.gst.text = gstValue;
+                                    calculateItem(item);
                                     Navigator.of(context).pop();
-                                    calculationController.calculateItem(item);
                                   },
                                 );
                               },
@@ -492,12 +490,14 @@ class MobileInvoicePage extends StatelessWidget {
                             color: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
+
                         Obx(() {
                           final total = addItemController.items.fold<double>(
                             0.0,
                             (sum, item) =>
                                 sum + (double.tryParse(item.total.text) ?? 0.0),
                           );
+                          addItemController.total.text = total.toString();
                           return Text(
                             "\u20B9 ${total.toStringAsFixed(2)}",
                             style: TextStyle(
@@ -516,5 +516,25 @@ class MobileInvoicePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void calculateItem(Item item) {
+    final quantity = int.tryParse(item.quantity.text) ?? 0;
+    final rate = double.tryParse(item.rate.text) ?? 0.0;
+    final gst = double.tryParse(item.gst.text) ?? 0.0;
+
+    final baseAmount = quantity * rate;
+    final tax = (baseAmount * gst) / 100;
+    final total = baseAmount + tax;
+
+    item.tax.text = tax.toStringAsFixed(2);
+    item.total.text = total.toStringAsFixed(2);
+
+    addItemController.items.refresh();
+  }
+  
+  void _pickDate(TextEditingController invoiceDateController) async {
+    final date = await addItemController.pickDate(Get.context!);
+    if (date != null) invoiceDateController.text = date;
   }
 }

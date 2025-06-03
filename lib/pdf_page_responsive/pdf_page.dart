@@ -10,6 +10,13 @@ class PdfPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Debug print to check the invoice data
+    print("Invoice Data: ${invoiceData.toJson()}");
+    print("Items count: ${invoiceData.items?.length ?? 0}");
+    invoiceData.items?.forEach((item) {
+      print("Item details: ${item.toJson()}");
+    });
+
     return Scaffold(
       appBar: MyAppBar(
         title: "Invoice",
@@ -17,7 +24,6 @@ class PdfPage extends StatelessWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final screenWidth = MediaQuery.of(context).size.width;
-
               return Padding(
                 padding: const EdgeInsets.only(right: 10),
                 child:
@@ -90,17 +96,19 @@ class PdfPage extends StatelessWidget {
                           ),
                           Text(
                             "Invoice No: ${invoiceData.invoiceNumber}",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text(
                             "Date: ${invoiceData.invoiceDate}",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
                     ],
                   ),
                   const Divider(color: Colors.grey, height: 50, thickness: 1),
+
+                  // Client information
                   const Text(
                     "Bill To:",
                     style: TextStyle(
@@ -110,7 +118,7 @@ class PdfPage extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "${invoiceData.clientName}",
+                    invoiceData.clientName ?? "No client name",
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
@@ -123,163 +131,73 @@ class PdfPage extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    invoiceData.contactNumber.toString(),
+                    invoiceData.contactNumber?.toString() ??
+                        "No contact number",
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const Divider(color: Colors.grey, height: 50, thickness: 1),
-                  const SizedBox(height: 10),
+
+                  // Items section
                   const Text(
-                    "Total Items",
+                    "Items",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
                       color: Colors.grey,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  ListView.builder(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: invoiceData.items!.length,
-                    itemBuilder: (context, index) {
-                      final item = invoiceData.items![index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 100,
-                                  child: Text(
-                                    "Item:",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                  const SizedBox(height: 20),
+
+                  // Items table
+                  if (invoiceData.items == null || invoiceData.items!.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: Text(
+                        "No items in this invoice",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
+                  else
+                    Column(
+                      children:
+                          invoiceData.items!.map((item) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 5),
+                                  _buildKeyValueRow(
+                                    "Item",
+                                    item.description.text,
                                   ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    item.description.toString(),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                    ),
+                                  _buildKeyValueRow(
+                                    "Quantity",
+                                    item.quantity.text,
                                   ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 100,
-                                  child: Text(
-                                    "Quantity:",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  _buildKeyValueRow(
+                                    "Rate",
+                                    "₹ ${item.rate.text}",
                                   ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    item.quantity.toString(),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                    ),
+                                  _buildKeyValueRow("GST", "${item.gst.text}%"),
+                                  _buildKeyValueRow(
+                                    "Total",
+                                    "₹ ${item.total.text}",
                                   ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 100,
-                                  child: Text(
-                                    "Rate:",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  const SizedBox(height: 10),
+                                  const Divider(
+                                    thickness: 1,
+                                    color: Colors.grey,
                                   ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    "\u20B9 ${item.rate.toString()}",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 100,
-                                  child: Text(
-                                    "GST:",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    item.gST.toString(),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 100,
-                                  child: Text(
-                                    "Tax:",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    "\u20B9 ${item.tax.toString()}",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 100,
-                                  child: Text(
-                                    "Total:",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    "\u20B9 ${item.total.toString()}",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                    ),
+
+                  // const Divider(thickness: 1),
+                  const SizedBox(height: 20),
+                  // Totals section
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -287,23 +205,24 @@ class PdfPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            "Subtotal: \u20B9 ${invoiceData.grandTotal!.toStringAsFixed(2)} ",
+                            "Subtotal: \u20B9 ${invoiceData.subtotal?.toStringAsFixed(2) ?? "0.00"}",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: 16,
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 8),
                           Text(
-                            "Total GST: \u20B9 ${(invoiceData.grandTotal! - invoiceData.subtotal!.toDouble()).toStringAsFixed(2)}",
+                            "Total GST: \u20B9 ${((invoiceData.grandTotal ?? 0) - (invoiceData.subtotal ?? 0)).toStringAsFixed(2)}",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: 16,
                             ),
                           ),
-                          const SizedBox(height: 10),
+
+                          const SizedBox(height: 8),
                           Text(
-                            "Total: \u20B9 ${invoiceData.grandTotal}",
+                            "Grand Total: \u20B9 ${invoiceData.grandTotal?.toStringAsFixed(2) ?? "0.00"}",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
@@ -314,8 +233,6 @@ class PdfPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
-                  // Center(child: Text(invoiceData.)),
                 ],
               ),
             ),
@@ -324,4 +241,19 @@ class PdfPage extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildKeyValueRow(String key, String value) {
+  return Row(
+    children: [
+      SizedBox(
+        width: 100,
+        child: Text(
+          "$key:",
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+      ),
+      Expanded(child: Text(value)),
+    ],
+  );
 }

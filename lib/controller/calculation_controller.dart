@@ -1,12 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../model/invoice.dart';
 
 class CalculationController extends GetxController {
   // Calculate individual item totals
   void calculateItem(Item item) {
-    final quantity = int.tryParse(item.quantity.text) ?? 0;
-    final rate = double.tryParse(item.rate.text) ?? 0.0;
-    final gst = double.tryParse(item.gst.text.replaceAll('%', '')) ?? 0.0;
+    final quantity = int.tryParse(item.quantity.toString()) ?? 0;
+    final rate = double.tryParse(item.rate.toString()) ?? 0.0;
+    final gst = double.tryParse(item.gst.toString().replaceAll('%', '')) ?? 0.0;
 
     final baseAmount = quantity * rate;
     final tax = (baseAmount * gst) / 100;
@@ -24,7 +25,7 @@ class CalculationController extends GetxController {
   // Calculate invoice total from all items
   double calculateInvoiceTotal(List<Item> items) {
     return items.fold(0.0, (sum, item) {
-      return sum + (double.tryParse(item.total.text) ?? 0.0);
+      return sum + (double.tryParse(item.total.toString()) ?? 0.0);
     });
   }
 
@@ -40,40 +41,40 @@ class CalculationController extends GetxController {
   }
 }
 
-class Item {
-  final TextEditingController name;
-  final TextEditingController quantity;
-  final TextEditingController rate;
-  final TextEditingController gst;
-  final TextEditingController tax;
-  final TextEditingController total;
+// class Item {
+//   final TextEditingController name;
+//   final TextEditingController quantity;
+//   final TextEditingController rate;
+//   final TextEditingController gst;
+//   final TextEditingController tax;
+//   final TextEditingController total;
 
-  Item({
-    required this.name,
-    required this.quantity,
-    required this.rate,
-    required this.gst,
-    required this.tax,
-    required this.total,
-  });
+//   Item({
+//     required this.name,
+//     required this.quantity,
+//     required this.rate,
+//     required this.gst,
+//     required this.tax,
+//     required this.total,
+//   });
 
-  factory Item.copy(Item other) {
-    return Item(
-      name: TextEditingController(text: other.name.text),
-      quantity: TextEditingController(text: other.quantity.text),
-      rate: TextEditingController(text: other.rate.text),
-      gst: TextEditingController(text: other.gst.text),
-      tax: TextEditingController(text: other.tax.text),
-      total: TextEditingController(text: other.total.text),
-    );
-  }
+//   factory Item.copy(Item other) {
+//     return Item(
+//       name: TextEditingController(text: other.name.text),
+//       quantity: TextEditingController(text: other.quantity.text),
+//       rate: TextEditingController(text: other.rate.text),
+//       gst: TextEditingController(text: other.gst.text),
+//       tax: TextEditingController(text: other.tax.text),
+//       total: TextEditingController(text: other.total.text),
+//     );
+//   }
 
-  void dispose() {
-    name.dispose();
-    quantity.dispose();
-    rate.dispose();
-    gst.dispose();
-    tax.dispose();
-    total.dispose();
-  }
-}
+//   void dispose() {
+//     name.dispose();
+//     quantity.dispose();
+//     rate.dispose();
+//     gst.dispose();
+//     tax.dispose();
+//     total.dispose();
+//   }
+// }

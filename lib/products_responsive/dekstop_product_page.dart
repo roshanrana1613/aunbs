@@ -62,8 +62,8 @@ class DekstopProductPage extends StatelessWidget {
                 child: ListView.builder(
                   itemCount: addItemController.productList.length,
                   itemBuilder: (context, index) {
-                    // final product = addItemController.productList[index];
-                    return CardList(index: index, );
+                    final product = addItemController.productList[index];
+                    return CardList(index: index, product: product);
                   },
                 ),
               ),

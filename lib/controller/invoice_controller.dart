@@ -1,4 +1,5 @@
 import 'package:anubs_invoice_app/model/invoice.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../services/api_services.dart';
@@ -7,6 +8,8 @@ class InvoiceController extends GetxController {
   var invoiceList = <InvoiceData>[].obs;
   var isLoading = true.obs;
   final apiService = ApiService();
+
+  
 
   @override
   void onInit() {
@@ -35,6 +38,25 @@ class InvoiceController extends GetxController {
       Get.back();
     } catch (e) {
       Get.snackbar("Error", "Failed to send Invoice");
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  Future<void> deleteData(InvoiceData invoiceData) async {
+    try {
+      isLoading(true);
+      await apiService.deleteInvoice(invoiceData.sId.toString());
+      await fetchInvoices(); // refresh list
+      Get.snackbar(
+        "Deleted",
+        "Invoice deleted successfully",
+        backgroundColor: Colors.red.withAlpha(125),
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      print("Error in deleteData: $e");
+      Get.snackbar("Error", "Failed to delete invoice");
     } finally {
       isLoading(false);
     }

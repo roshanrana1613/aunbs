@@ -7,7 +7,6 @@ import 'package:anubs_invoice_app/utiles/my_search_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 class MobileInovieList extends StatelessWidget {
   MobileInovieList({super.key});
 

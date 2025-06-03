@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 class MobileAddProductPage extends StatelessWidget {
   MobileAddProductPage({super.key});
   final addItemController = Get.find<AddItemController>();
-  final barcodeController = Get.find<BarcodeController>();  
+  final barcodeController = Get.find<BarcodeController>();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -331,14 +331,14 @@ class MobileAddProductPage extends StatelessWidget {
                           const SizedBox(height: 30),
                           Center(
                             child: Obx(() {
-                              if (addItemController.barcode.isEmpty) {
+                              if (barcodeController.barcode.isEmpty) {
                                 return SizedBox.shrink();
                               }
 
                               final barcode = Barcode.code128();
 
                               final svg = barcode.toSvg(
-                                addItemController.barcode.value,
+                                barcodeController.barcode.value,
                                 width: 300,
                                 height: 100,
                                 drawText: false,

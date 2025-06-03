@@ -2,7 +2,6 @@ import 'package:anubs_invoice_app/controller/invoice_controller.dart';
 import 'package:anubs_invoice_app/model/invoice.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import '../controller/add_item_controller.dart';
 import '../routes/app_pages.dart'; // Update this import if needed
 
@@ -50,34 +49,30 @@ class InvoiceActionButtons extends StatelessWidget {
         icon: Icons.save,
         onTap: () {
           if (formKey.currentState!.validate()) {
-            final invoiceDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-            final dueDate = DateFormat(
-              'yyyy-MM-dd',
-            ).format(DateTime.now().add(Duration(days: 7)));
             final invoiceData = InvoiceData(
               clientName: addItemController.clientName.text,
               contactNumber: int.tryParse(addItemController.contactNumber.text),
               clientAddress: addItemController.clientAddress.text,
               invoiceNumber: addItemController.invoiceNumber.text,
-              invoiceDate: invoiceDate,
-              dueDate: dueDate,
+              invoiceDate: addItemController.invoiceDate.text,
+              dueDate: addItemController.dueDate.text,
               subtotal: double.tryParse(addItemController.subtotal.text),
               // only gst count is empty that can fix letter
-              totalGST: double.tryParse(addItemController.subtotal.text),
+              totalGST: double.tryParse(addItemController.total.text),
               // here can adding total can fix letter
-              grandTotal: double.tryParse(addItemController.subtotal.text),
+              grandTotal: double.tryParse(addItemController.total.text),
+              items: addItemController.items.toList(),
             );
-
-            print("withot cast -> ${addItemController.subtotal.text}");
-
-            print(
-              "With cat -> ${int.tryParse(addItemController.subtotal.text)}",
-            );
-
             invoiceController.createInvoice(invoiceData);
             Get.offNamed(Routes.invoicesList);
-            Get.snackbar("Success", "Invoice Saved");
+            Get.snackbar(
+              "Success",
+              "Invoice Saved",
+              backgroundColor: Colors.black.withAlpha(125),
+              colorText: Colors.white,
+            );
           }
+          addItemController.clearInvoicePage();
         },
       ),
       _buildSquareButton(

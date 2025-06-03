@@ -1,3 +1,4 @@
+import 'package:anubs_invoice_app/controller/invoice_controller.dart';
 import 'package:anubs_invoice_app/model/invoice.dart';
 import 'package:anubs_invoice_app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,7 @@ class CardList extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          "Invoice No: ${invoiceData!.invoiceNumber}",
+                          "Invoice No: ${invoiceData!.subtotal}",
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -76,7 +77,48 @@ class CardList extends StatelessWidget {
                       ),
                       IconButton(
                         onPressed: () {
-                          // i.savedInvoices.removeAt(index);
+                          // Get.find<InvoiceController>().deleteData(
+                          //   invoiceData!,
+                          // );
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(
+                                  "Confirm Delete",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                content: Text(
+                                  "Are you sure you want to delete this item ?",
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      // Get.back();
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Get.find<InvoiceController>().deleteData(
+                                        invoiceData!,
+                                      );
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(
+                                      "Delete",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         },
                         icon: const Icon(Icons.delete, color: Colors.red),
                         style: ButtonStyle(
@@ -92,12 +134,12 @@ class CardList extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Date: ${invoiceData!.invoiceDate}",
+                    "Date: ${Get.find<AddItemController>().formatDate(invoiceData!.invoiceDate.toString())}",
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Amount: ₹ ${invoiceData!.grandTotal}",
+                    "Amount: ₹ ${invoiceData!.grandTotal.toString()}",
                     style: const TextStyle(fontSize: 16),
                   ),
                 ],
@@ -180,7 +222,7 @@ class CardList extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Custom Code: ${product!.customCode}",
+                    "Custom Code: ${product!.customCode.toUpperCase()}",
                     style: const TextStyle(fontSize: 16),
                   ),
                 ],
