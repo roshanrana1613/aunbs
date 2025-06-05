@@ -1,5 +1,7 @@
 import 'package:anubs_invoice_app/controller/invoice_controller.dart';
+import 'package:anubs_invoice_app/controller/product_controller.dart';
 import 'package:anubs_invoice_app/model/invoice.dart';
+import 'package:anubs_invoice_app/model/product.dart';
 import 'package:anubs_invoice_app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,16 +10,16 @@ import '../controller/add_item_controller.dart';
 
 class CardList extends StatelessWidget {
   final InvoiceData? invoiceData;
-  final Product? product;
+  final ProductData? productData;
   final int index;
 
   const CardList({
     super.key,
     this.invoiceData,
-    this.product,
     required this.index,
+    this.productData,
   }) : assert(
-         invoiceData != null || product != null,
+         invoiceData != null || productData != null,
          'Either invoice or product must be provided.',
        );
 
@@ -77,9 +79,6 @@ class CardList extends StatelessWidget {
                       ),
                       IconButton(
                         onPressed: () {
-                          // Get.find<InvoiceController>().deleteData(
-                          //   invoiceData!,
-                          // );
                           showDialog(
                             context: context,
                             builder: (context) {
@@ -145,7 +144,7 @@ class CardList extends StatelessWidget {
                 ],
               ),
             ),
-          ] else if (product != null) ...[
+          ] else if (productData != null) ...[
             // Product UI only
             Container(
               padding: EdgeInsets.all(15),
@@ -169,7 +168,7 @@ class CardList extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          "Product Name: ${product!.productName}",
+                          "Product Name: ${productData!.productName}",
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -179,8 +178,14 @@ class CardList extends StatelessWidget {
                       IconButton(
                         onPressed: () {
                           // Define your product edit/view logic here
-                          if (product != null) {
-                            Get.toNamed(Routes.viewProduct, arguments: product);
+                          if (productData != null) {
+                            print(
+                              "Passing product type: ${productData.runtimeType}",
+                            );
+                            Get.toNamed(
+                              Routes.viewProduct,
+                              arguments: productData,
+                            );
                           } else {
                             Get.snackbar("Error", "Product data is missing");
                           }
@@ -195,8 +200,44 @@ class CardList extends StatelessWidget {
                       ),
                       IconButton(
                         onPressed: () {
-                          // Remove product logic here
-                          // addItemController.productList.removeAt(index);
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(
+                                  "Confirm Delete",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                content: Text(
+                                  "Are you sure you want to delete this item ?",
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      // Get.back();
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Get.find<ProductController>()
+                                          .removeProduct(productData!);
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(
+                                      "Delete",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         },
                         icon: const Icon(Icons.delete, color: Colors.red),
                         style: ButtonStyle(
@@ -207,22 +248,22 @@ class CardList extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Brand: ${product!.brand}",
+                    "Brand: ${productData!.brand}",
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Price: ₹ ${product!.price.toStringAsFixed(2)}",
+                    "Price: ₹ ${productData!.price!.toStringAsFixed(2)}",
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Quantity: ${product!.quantity}",
+                    "Quantity: ${productData!.quantity}",
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Custom Code: ${product!.customCode.toUpperCase()}",
+                    "Custom Code: ${productData!.customCode!.toUpperCase()}",
                     style: const TextStyle(fontSize: 16),
                   ),
                 ],

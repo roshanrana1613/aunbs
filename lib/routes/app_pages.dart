@@ -5,6 +5,7 @@ import 'package:anubs_invoice_app/add_product_responsive/tablat_add_product_page
 import 'package:anubs_invoice_app/bindings/barcode_binding.dart';
 import 'package:anubs_invoice_app/bindings/calculation_binding.dart';
 import 'package:anubs_invoice_app/bindings/invocie_binding.dart';
+import 'package:anubs_invoice_app/bindings/product_binding.dart';
 import 'package:anubs_invoice_app/pdf_page_responsive/pdf_page.dart';
 import 'package:anubs_invoice_app/pdf_page_responsive/tablat_pdf_page.dart';
 import 'package:anubs_invoice_app/pdf_page_responsive/dekstop_pdf_page.dart';
@@ -101,6 +102,7 @@ class AppPages {
             tablatScreen: TablatProductPage(),
             dekstopScreen: DekstopProductPage(),
           ),
+      binding: ProductBinding(),
     ),
     GetPage(name: Routes.field, page: () => CalculationMobileField()),
     GetPage(
@@ -121,7 +123,7 @@ class AppPages {
             tablatScreen: TablatAddProductPage(),
             dekstopScreen: DekstopAddProductPage(),
           ),
-      bindings: [AddItemBinding(), BarcodeBinding()],
+      bindings: [AddItemBinding(), BarcodeBinding(), ProductBinding()],
     ),
     GetPage(
       name: Routes.viewProduct,
@@ -131,7 +133,7 @@ class AppPages {
             tablatScreen: TablatViewProduct(),
             dekstopScreen: DekstopViewProduct(),
           ),
-      binding: AddItemBinding(),
+      bindings: [AddItemBinding(), BarcodeBinding()],
     ),
     GetPage(
       name: Routes.settings,

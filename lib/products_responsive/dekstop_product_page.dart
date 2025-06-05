@@ -1,3 +1,4 @@
+import 'package:anubs_invoice_app/controller/product_controller.dart';
 import 'package:anubs_invoice_app/routes/app_pages.dart';
 import 'package:anubs_invoice_app/utiles/my_add_item_button.dart';
 import 'package:anubs_invoice_app/utiles/my_search_field.dart';
@@ -10,6 +11,7 @@ import '../utiles/card_list.dart';
 class DekstopProductPage extends StatelessWidget {
   DekstopProductPage({super.key});
   final addItemController = Get.find<AddItemController>();
+  final productController = Get.find<ProductController>();
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +62,10 @@ class DekstopProductPage extends StatelessWidget {
               const SizedBox(height: 30),
               Expanded(
                 child: ListView.builder(
-                  itemCount: addItemController.productList.length,
+                  itemCount: productController.productList.length,
                   itemBuilder: (context, index) {
-                    final product = addItemController.productList[index];
-                    return CardList(index: index, product: product);
+                    final product = productController.productList[index];
+                    return CardList(index: index, productData: product);
                   },
                 ),
               ),

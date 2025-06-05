@@ -1,5 +1,7 @@
 import 'package:anubs_invoice_app/controller/add_item_controller.dart';
 import 'package:anubs_invoice_app/controller/barcode_controller.dart';
+import 'package:anubs_invoice_app/controller/product_controller.dart';
+import 'package:anubs_invoice_app/model/product.dart';
 import 'package:anubs_invoice_app/routes/app_pages.dart';
 import 'package:anubs_invoice_app/utiles/client_details.dart';
 import 'package:anubs_invoice_app/utiles/my_add_item_button.dart';
@@ -13,6 +15,7 @@ class TablatAddProductPage extends StatelessWidget {
   TablatAddProductPage({super.key});
   final addItemController = Get.find<AddItemController>();
   final barcodeController = Get.find<BarcodeController>();
+  final productController = Get.find<ProductController>();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -40,7 +43,23 @@ class TablatAddProductPage extends StatelessWidget {
                             icon: Icons.save,
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                addItemController.saveProduct();
+                                final productData = ProductData(
+                                  productName:
+                                      addItemController.productName.text,
+                                  brand: addItemController.brandName.text,
+                                  price: int.tryParse(
+                                    addItemController.productPrice.text,
+                                  ),
+                                  quantity: int.tryParse(
+                                    addItemController.productQuntity.text,
+                                  ),
+                                  customCode: addItemController.customCode.text,
+                                  description:
+                                      addItemController.productDescription.text,
+                                  size: addItemController.sizeVariant.text,
+                                );
+                                productController.createProduct(productData);
+
                                 Get.snackbar(
                                   'Success',
                                   'Product saved successfully',
@@ -54,7 +73,23 @@ class TablatAddProductPage extends StatelessWidget {
                             icon: Icons.save,
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                addItemController.saveProduct();
+                                final productData = ProductData(
+                                  productName:
+                                      addItemController.productName.text,
+                                  brand: addItemController.brandName.text,
+                                  price: int.tryParse(
+                                    addItemController.productPrice.text,
+                                  ),
+                                  quantity: int.tryParse(
+                                    addItemController.productQuntity.text,
+                                  ),
+                                  customCode: addItemController.customCode.text,
+                                  description:
+                                      addItemController.productDescription.text,
+                                  size: addItemController.sizeVariant.text,
+                                );
+                                productController.createProduct(productData);
+
                                 Get.snackbar(
                                   'Success',
                                   'Product saved successfully',

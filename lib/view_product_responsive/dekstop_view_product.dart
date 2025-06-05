@@ -1,30 +1,18 @@
 import 'package:anubs_invoice_app/controller/add_item_controller.dart';
+import 'package:anubs_invoice_app/model/product.dart';
 import 'package:anubs_invoice_app/utiles/my_app_bar.dart';
-import 'package:barcode/barcode.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class DekstopViewProduct extends StatelessWidget {
   DekstopViewProduct({super.key});
 
-  final Product? productDetails = Get.arguments;
+  // final Product? productDetails = Get.arguments;
+  final ProductData productDetails = Get.arguments as ProductData;
   final addItemController = Get.find<AddItemController>();
 
   @override
   Widget build(BuildContext context) {
-    if (productDetails == null) {
-      return Scaffold(
-        appBar: MyAppBar(title: "Product Details"),
-        body: Center(
-          child: Text(
-            "No product details available.",
-            style: TextStyle(fontSize: 20, color: Colors.red),
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: MyAppBar(title: "Product Details"),
@@ -56,24 +44,24 @@ class DekstopViewProduct extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        productDetails!.brand,
+                        productDetails.brand!,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 35,
                         ),
                       ),
                       const SizedBox(height: 30),
-                      _buildDetail("Brand", productDetails!.productName),
-                      _buildDetail("Price", productDetails!.price.toString()),
+                      _buildDetail("Brand", productDetails.productName!),
+                      _buildDetail("Price", productDetails.price.toString()),
                       _buildDetail(
                         "Size/Variant",
-                        productDetails!.size.toString(),
+                        productDetails.size.toString(),
                       ),
                       _buildDetail(
                         "Quantity in Stock",
-                        productDetails!.quantity.toString(),
+                        productDetails.quantity.toString(),
                       ),
-                      _buildDetail("Description", productDetails!.description),
+                      _buildDetail("Description", productDetails.description!),
                     ],
                   ),
                 ),
@@ -117,7 +105,7 @@ class DekstopViewProduct extends StatelessWidget {
                           borderRadius: BorderRadius.circular(7),
                         ),
                         child: Text(
-                          productDetails!.customCode.toUpperCase(),
+                          productDetails.customCode!.toUpperCase(),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -133,50 +121,6 @@ class DekstopViewProduct extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 30),
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        width: double.infinity,
-                        decoration: BoxDecoration(color: Colors.white),
-                        child: Center(
-                          child: Builder(
-                            builder: (_) {
-                              if (productDetails!.barcode.isEmpty) {
-                                return const SizedBox.shrink();
-                              }
-
-                              try {
-                                final barcode = Barcode.code128();
-                                final svg = barcode.toSvg(
-                                  productDetails!.barcode,
-                                  width: 300,
-                                  height: 100,
-                                  drawText: false,
-                                );
-
-                                return Column(
-                                  children: [
-                                    SvgPicture.string(svg),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      productDetails!.customCode.toUpperCase(),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              } catch (e) {
-                                return const Text(
-                                  "Error generating barcode",
-                                  style: TextStyle(color: Colors.red),
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
